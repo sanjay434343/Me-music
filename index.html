@@ -3,107 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soundtrack of Us</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script> <!-- GSAP Library -->
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         body {
-            margin: 0;
-            background-color: rgb(255, 255, 255);
-            display: flex;
-            justify-content: center;
+            margin: 0; /* Remove default margin */
+            overflow: hidden; /* Prevent scrollbars */
+            position: relative; /* Position relative for absolute positioning of children */
+            height: 100vh; /* Full viewport height */
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1; /* Keep it behind other content */
+        }
+        
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the entire background */
+        }
+        
+        .content {
+            display: flex; /* Use flexbox for centering */
             align-items: center;
-            height: 100vh;
-            scrollbar-width: thin;
+            justify-content: center; /* Center horizontally */
+            text-align: center; 
+            font-size: 90px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center vertically and horizontally */
+            color: #ffffff; /* Set color for the text */
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
         }
 
-        .container {
-            text-align: center;
-        }
-
-        .video-player {
-            border-radius: 50%; /* Makes the video circular */
-            width: 300px; /* Set your desired width */
-            height: 300px; /* Set your desired height */
-            overflow: hidden; /* Hides overflow */
-            object-fit: cover; /* Ensures the video covers the circular area */
-        }
-
-        .video-text {
-            font-family: 'MyCustomFont', sans-serif;
-            color: #000000;
-            margin-top: 80px;
-            font-size: 60px;
-        }
-
-        @media screen and (max-width: 768px) {
-            .video-player {
-                position: relative;
-                top: -40px;
-                width: 200px; /* Set your desired width */
-                height: 200px; /* Set your desired height */
-            } 
-            .video-text {
-                font-family: 'MyCustomFont', sans-serif;
-                color: #000000;
-                margin-top: 20px;
-                font-size: 20px;
-                position: absolute;
-                bottom: 15px;
-                left: 25%;
-                font-size: 30px;
-            }
+        .text {
+            font-family: 'CustomFont', sans-serif; 
+            position: absolute;
+            bottom: 20px;
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for text width */
+            font-size: 40px;
+            margin-bottom: -20px;
+            color: #ffffff; /* Set color for the text */
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
+            font-weight: 200;
         }
 
         @font-face {
-            font-family: 'MyCustomFont'; /* Name you want to use for the font */
-            src: url('Sketch.ttf') format('truetype'); /* Path to your font file */
-            font-weight: normal; /* You can specify the weight if needed */
-            font-style: normal; /* You can specify the style if needed */
+            font-family: 'CustomFont'; /* Choose a name for your font */
+            src: url('MusicNoteOne-rg7W9.ttf') format('truetype');
+            font-weight: normal; /* Define the weight of the font */
+            font-style: normal; /* Define the style of the font */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <video id="videoPlayer" class="video-player" autoplay loop>
-            <source src="https://cdn.pixabay.com/video/2022/09/20/131973-751915246_large.mp4" type="video/mp4">
-            Your browser does not support the video tag.
+
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="https://cdn.pixabay.com/video/2022/09/20/131973-751915246_large.mp4" type="video/mp4"> <!-- Replace with your video file -->
+            Your browser does not support HTML5 video.
         </video>
-        <p class="video-text">Soundtrack of Us</p>
+    </div>
+    
+    <div class="content">
+        <i class="fa-solid fa-music fa-bounce fa-2xs"></i>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const videoPlayer = document.getElementById('videoPlayer');
-            const videoText = document.querySelector('.video-text'); // Select the video text
-
-            // Set a timeout to zoom the video after 5 seconds
-            setTimeout(() => {
-                // Create a GSAP timeline for smooth animations
-                const tl = gsap.timeline();
-                tl.to(videoText, {
-                    opacity: 0, // Fade out the text
-                    duration: 0.5, // Duration of the text fade
-                    ease: "power2.in" // Smoother easing for fade
-                })
-                .to(videoPlayer, {
-                    scale: 4, // Zoom in
-                    borderRadius: "0%", // Remove circular border
-                    width: "100vw", // Fill the screen width
-                    height: "100vh", // Fill the screen height
-                    duration: 1, // Duration of the zoom
-                    ease: "power2.out" // Smoother easing
-                })
-                .to(videoPlayer, {
-                    opacity: 0, // Fade out the video
-                    duration: 1, // Duration of the fade
-                    ease: "power2.in" // Smoother easing for fade
-                })
-                .eventCallback("onComplete", () => {
-                    // Redirect to main.html after fade out
-                    window.location.href = 'main.html';
-                });
-            }, 5000);
-        });
-    </script>
+    <div class="text">
+        <p>Soundtrack of Us</p>
+    </div>
 </body>
 </html>
