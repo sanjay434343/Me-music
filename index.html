@@ -1,291 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music Player with Playlist and Images</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Shrikhand&family=Tangerine:wght@400;700&family=Yesteryear&display=swap" rel="stylesheet">
-  <style>
-    /* Styling */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-        font-family: "Yesteryear", serif;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundtrack of Us</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script> <!-- GSAP Library -->
+    <style>
+        body {
+            margin: 0;
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            scrollbar-width: thin;
+        }
 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden; /* Hide overflow for body */
-      position: relative; /* Relative positioning for video */
-    }
-    
-    /* Video background */
-    .video-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1; /* Keep it behind other content */
-    }
-    
-    .video-background video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Cover the entire background */
-    }
+        .container {
+            text-align: center;
+        }
 
-    .card {
-      background: rgba(0, 0, 0, 0.438);
-      border-radius: 30px;
-      padding: 20px;
-      color: #fff;
-      width: 98%;
-      max-width: 400px;
-      position: relative; /* Changed from fixed to relative */
-      margin-top: 10px; /* Add some space from the top */
-    }
+        .video-player {
+            border-radius: 50%; /* Makes the video circular */
+            width: 300px; /* Set your desired width */
+            height: 300px; /* Set your desired height */
+            overflow: hidden; /* Hides overflow */
+            object-fit: cover; /* Ensures the video covers the circular area */
+        }
 
-    .music-player {
-      text-align: center;
-      position: relative; /* Ensure positioning context for absolute children */
-      overflow: hidden; /* Hide overflow to prevent image from spilling */
-      height: 300px; /* Set a fixed height for the player */
-    }
+        .video-text {
+            font-family: 'MyCustomFont', sans-serif;
+            color: #000000;
+            margin-top: 80px;
+            font-size: 60px;
+        }
 
-    .music-player h2 {
-      font-size: 1.5rem;
-      position: relative; /* Positioning for text over image */
-      z-index: 1; /* Bring text above the image */
-    }
+        @media screen and (max-width: 768px) {
+            .video-player {
+                position: relative;
+                top: -40px;
+                width: 200px; /* Set your desired width */
+                height: 200px; /* Set your desired height */
+            } 
+            .video-text {
+                font-family: 'MyCustomFont', sans-serif;
+                color: #000000;
+                margin-top: 20px;
+                font-size: 20px;
+                position: absolute;
+                bottom: 15px;
+                left: 25%;
+                font-size: 30px;
+            }
+        }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: absolute;
-      bottom: 20px;
-      left: 30%;
-      z-index: 1; /* Ensure controls are above the image */
-    }
-
-    .controls button {
-      padding: 10px;
-      font-size: 1.2rem;
-      color: #fff;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-
-    .controls button:hover { color: #ff6b6b; }
-
-    /* Playlist Section */
-    .playlist {
-        font-family: "Yesteryear", serif;
-      position: fixed;
-      top: 293px; /* Positioning below the player */
-      bottom: 3px; /* Space from bottom */
-      overflow-y: auto; /* Enable vertical scrolling */
-      width: 98%;
-      max-width: 400px;
-      background: rgba(0, 0, 0, 0.499);
-      padding: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      scrollbar-width: thin; 
-    }
-
-    .playlist h3 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .playlist-item {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      color: #fff;
-      cursor: pointer;
-      border-bottom: 1px solid #444;
-      transition: background 0.3s;
-      border-radius: 50px;
-      background-color: rgba(255, 255, 255, 0.292);
-    margin-bottom: 2px;
-    font-size: 20px;
-    font-weight: 500;
-    }
-
-    .playlist-item:hover {
-      background: #ffffff;
-      color: black;
-      border-radius: 50px;
-    }
-
-    .playlist-item img {
-      width: 50px; /* Set a fixed width for the image */
-      height: 50px; /* Set a fixed height for the image */
-      margin-right: 10px; /* Space between image and title */
-      border-radius: 3px; /* Round the corners of the image */
-      border-top-left-radius: 25px;
-      border-bottom-left-radius: 25px;
-
-    }
-
-    .playlist::-webkit-scrollbar {
-      display: none; /* Hide the scrollbar */
-    }
-
-    /* Hide the scrollbar for Firefox */
-    .playlist {
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
-    }
-
-    #song-image {
-      position: absolute; /* Position image absolutely within the card */
-      top: 0; /* Align image to the top */
-      left: 0; /* Align image to the left */
-      width: 100%; /* Make the image fill the width */
-      height: 100%; /* Make the image fill the height */
-      object-fit: cover; /* Cover the container while maintaining aspect ratio */
-      z-index: 0; /* Send image behind text and controls */
-    }
-
-    #song-image{
-        opacity: 70%;
-    }
-
-    .im{
-        border-radius: 100px;
-        margin-left: 0px;
-    }
-  </style>
+        @font-face {
+            font-family: 'MyCustomFont'; /* Name you want to use for the font */
+            src: url('Sketch.ttf') format('truetype'); /* Path to your font file */
+            font-weight: normal; /* You can specify the weight if needed */
+            font-style: normal; /* You can specify the style if needed */
+        }
+    </style>
 </head>
 <body>
-
-  <!-- Video Background -->
-  <div class="video-background">
-    <video autoplay muted loop>
-      <source src="https://cdn.pixabay.com/video/2022/09/20/131973-751915246_large.mp4" type="video/mp4"> <!-- Replace with your video file -->
-      Your browser does not support HTML5 video.
-    </video>
-  </div>
-
-  <!-- Music Player Card -->
-  <div class="card music-player" id="music-player" style="height: 289px;">
-    <img id="song-image" src="" alt="Song Image" >
-    <h2 id="song-title">Me Music</h2>
-    <div class="controls">
-      <button id="prev"><i class="fas fa-backward"></i></button>
-      <button id="play-pause"><i class="fas fa-play"></i></button>
-      <button id="next"><i class="fas fa-forward"></i></button>
+    <div class="container">
+        <video id="videoPlayer" class="video-player" autoplay loop>
+            <source src="https://cdn.pixabay.com/video/2022/09/20/131973-751915246_large.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <p class="video-text">Soundtrack of Us</p>
     </div>
-  </div>
 
-  <!-- Playlist Card -->
-  <div class="card playlist" id="playlist">
-    <h3>Playlist</h3>
-  </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoText = document.querySelector('.video-text'); // Select the video text
 
-  <script>
-    const playPauseBtn = document.getElementById('play-pause');
-    const songTitle = document.getElementById('song-title');
-    const playlist = document.getElementById('playlist');
-
-    let isPlaying = false;
-    let audio = new Audio();
-    let currentSongIndex = 0;
-
-    // Define songs with image URLs
-    const songs = [
-        { title: "Dads girl", path: "./Music/Dad's girl.mp3", image: "https://cdn.pixabay.com/photo/2016/11/18/16/44/child-1835730_1280.jpg" },
-        { title: "Mother & Son", path: "./Music/dg.mp3", image: "https://cdn.pixabay.com/photo/2016/09/19/20/49/baby-1681181_1280.jpg" },
-        { title: "Hidden golden memories", path: "./Music/Hidden golden memories.mp3", image: "https://cdn.pixabay.com/photo/2014/02/02/17/40/photos-256887_960_720.jpg" },
-        { title: "Mazhaiyin Kadhal", path: "./Music/Mazhaiyin Kadhal.mp3", image: "https://cdn.pixabay.com/photo/2017/08/05/15/19/puddle-2584378_960_720.jpg" },
-        { title: "Memories", path: "./Music/Memories.mp3", image: "https://cdn.pixabay.com/photo/2022/12/19/17/18/photos-7666143_1280.jpg" },
-        { title: "Muttals", path: "./Music/MuTtAlS.mp3", image: "https://cdn.pixabay.com/photo/2020/08/16/16/12/friends-5493229_960_720.jpg" },
-        { title: "My Forever Love", path: "./Music/My Forever Love.mp3", image: "https://cdn.pixabay.com/photo/2022/04/11/16/12/sunset-7126126_960_720.jpg" },
-        { title: "On the first day", path: "./Music/N.mp3", image: "https://cdn.pixabay.com/photo/2017/05/07/03/56/love-2291586_960_720.jpg" },
-        { title: "Now you gone", path: "./Music/now you gone.mp3", image: "https://cdn.pixabay.com/photo/2021/01/28/03/13/person-5956897_960_720.jpg" },
-        { title: "Papa", path: "./Music/Papa (1).mp3", image: "https://cdn.pixabay.com/photo/2021/04/14/07/03/newborn-6177485_960_720.jpg" },
-        { title: "Rain", path: "./Music/Rain.mp3", image: "https://cdn.pixabay.com/photo/2019/07/31/18/20/thunderstorm-4375844_960_720.jpg" },
-        { title: "A first meet", path: "./Music/S.mp3", image: "https://cdn.pixabay.com/photo/2022/01/29/06/07/couple-6976409_960_720.jpg" },
-        { title: "Sara", path: "./Music/SARA.mp3", image: "https://cdn.pixabay.com/photo/2020/01/09/12/29/hand-4752642_960_720.jpg" },
-        { title: "Thinking about how life used", path: "./Music/Thinking 'bout how life used to be.mp3", image: "https://cdn.pixabay.com/photo/2016/11/29/13/51/alone-1869997_960_720.jpg" },
-        { title: "You will come to me", path: "./Music/நீ என்னிடம் வருவாய், நான் உனக்காக வருவேன.mp3", image: "https://cdn.pixabay.com/photo/2016/05/30/22/02/bleeding-heart-1425870_960_720.jpg" },
-        { title: "Shadows of happiness", path: "./Music/மகிழ்ச்சியின் நிழல்கள் (1) (mp3cut.net).mp3", image: "https://cdn.pixabay.com/photo/2014/12/16/22/25/sunset-570881_960_720.jpg" },
-        { title: "The time when rain comes", path: "./Music/மழை வரும் நேரம் வானம் நெருங்கும்.mp3", image: "https://cdn.pixabay.com/photo/2015/10/09/18/09/sunset-979705_960_720.jpg" },
-    ];
-
-    // Function to load the current song
-    function loadSong(index) {
-        const song = songs[index];
-        if (song) { // Check if song exists
-            audio.src = song.path;
-            songTitle.textContent = song.title;
-            document.getElementById('song-image').src = song.image;
-        } else {
-            console.error("Song not found");
-        }
-    }
-
-    // Play/Pause functionality
-    playPauseBtn.addEventListener('click', () => {
-        if (isPlaying) {
-            audio.pause();
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        } else {
-            audio.play();
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        }
-        isPlaying = !isPlaying;
-    });
-
-    // Next song functionality
-    document.getElementById('next').addEventListener('click', () => {
-        currentSongIndex = (currentSongIndex + 1) % songs.length;
-        loadSong(currentSongIndex);
-        if (isPlaying) {
-            audio.play();
-        }
-    });
-
-    // Previous song functionality
-    document.getElementById('prev').addEventListener('click', () => {
-        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-        loadSong(currentSongIndex);
-        if (isPlaying) {
-            audio.play();
-        }
-    });
-
-    songs.forEach((song, index) => {
-        const songItem = document.createElement('div');
-        songItem.classList.add('playlist-item');
-        songItem.innerHTML = `<img src="${song.image}" alt="${song.title}" class="im"> ${song.title}`;
-        songItem.addEventListener('click', () => {
-            currentSongIndex = index; // Use the current index
-            loadSong(currentSongIndex);
-            // Play the selected song
-            if (isPlaying) {
-                audio.pause(); // Pause the currently playing song
-            }
-            audio.play(); // Play the new song
-            isPlaying = true; // Set playing state to true
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>'; // Update button to pause
+            // Set a timeout to zoom the video after 5 seconds
+            setTimeout(() => {
+                // Create a GSAP timeline for smooth animations
+                const tl = gsap.timeline();
+                tl.to(videoText, {
+                    opacity: 0, // Fade out the text
+                    duration: 0.5, // Duration of the text fade
+                    ease: "power2.in" // Smoother easing for fade
+                })
+                .to(videoPlayer, {
+                    scale: 4, // Zoom in
+                    borderRadius: "0%", // Remove circular border
+                    width: "100vw", // Fill the screen width
+                    height: "100vh", // Fill the screen height
+                    duration: 1, // Duration of the zoom
+                    ease: "power2.out" // Smoother easing
+                })
+                .to(videoPlayer, {
+                    opacity: 0, // Fade out the video
+                    duration: 1, // Duration of the fade
+                    ease: "power2.in" // Smoother easing for fade
+                })
+                .eventCallback("onComplete", () => {
+                    // Redirect to main.html after fade out
+                    window.location.href = 'main.html';
+                });
+            }, 5000);
         });
-        playlist.appendChild(songItem);
-    });
-      
-    // Load the first song on page load
-    loadSong(currentSongIndex);
-</script>
-
+    </script>
 </body>
 </html>
